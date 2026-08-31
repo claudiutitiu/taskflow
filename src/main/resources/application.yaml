@@ -1,4 +1,13 @@
 spring:
   application:
     name: taskflow
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskflow
+    username: taskflow_user
+    password: secretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     
