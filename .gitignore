@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.eclipse
+.vscode/
+
+# OS/Mac
+.DS_Store
+
+# Environment Variables & Secrets
+.env
+*.env
+application-local.yml
