@@ -34,4 +34,30 @@ public class TaskController {
         Page<TaskResponse> responses = taskService.getTasks(authentication.getName(), status, pageable);
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponse> getTaskById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(taskService.getTaskById(id, authentication.getName()));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskRequest request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(taskService.updateTask(id, request, authentication.getName()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        taskService.deleteTask(id, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 }

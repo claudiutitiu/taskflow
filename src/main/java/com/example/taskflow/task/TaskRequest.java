@@ -18,4 +18,6 @@ public class TaskRequest {
     
     @NotNull(message = "Priority is required")
     private TaskPriority priority;
+
+    private TaskStatus status;
 }
