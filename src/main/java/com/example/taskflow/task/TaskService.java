@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.example.taskflow.exception.ResourceNotFoundException;
+import com.example.taskflow.messaging.RabbitMQConfig;
+import com.example.taskflow.messaging.TaskCompletedEvent;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +18,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     public TaskResponse createTask(TaskRequest request, String username) {
         User user = userRepository.findByUsername(username)
@@ -80,8 +84,17 @@ public class TaskService {
         }
 
         task.setStatus(request.getStatus());
-        
         Task updatedTask = taskRepository.save(task);
+
+        if (updatedTask.getStatus() == TaskStatus.DONE) {
+            TaskCompletedEvent event = new TaskCompletedEvent(
+                    updatedTask.getId(),
+                    updatedTask.getTitle(),
+                    username
+            );
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, event);
+        }
+
         return mapToResponse(updatedTask);
     }
 
