@@ -14,12 +14,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-        try {
-            String result = authService.registerUser(request);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        String result = authService.registerUser(request);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/login")
