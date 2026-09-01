@@ -17,3 +17,17 @@ services:
     ports:
       - "5672:5672"   
       - "15672:15672" 
+  
+  taskflow-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+    restart: on-failure
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/taskflow 
+      - SPRING_DATASOURCE_USERNAME=taskflow_user
+      - SPRING_DATASOURCE_PASSWORD=secretpassword
+      - SPRING_RABBITMQ_HOST=rabbitmq
