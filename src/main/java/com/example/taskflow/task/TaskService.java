@@ -72,6 +72,19 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    public TaskResponse updateTaskStatus(Long taskId, TaskStatusUpdateRequest request, String username) {
+        Task task = getTaskSecurely(taskId, username);
+
+        if (task.getStatus() == request.getStatus()) {
+            throw new IllegalArgumentException("Task is already in " + request.getStatus() + " status");
+        }
+
+        task.setStatus(request.getStatus());
+        
+        Task updatedTask = taskRepository.save(task);
+        return mapToResponse(updatedTask);
+    }
+
 
     private TaskResponse mapToResponse(Task task) {
         return TaskResponse.builder()

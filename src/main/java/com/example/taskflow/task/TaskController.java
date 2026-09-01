@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -59,5 +60,14 @@ public class TaskController {
     ) {
         taskService.deleteTask(id, authentication.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponse> updateTaskStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskStatusUpdateRequest request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(taskService.updateTaskStatus(id, request, authentication.getName()));
     }
 }
