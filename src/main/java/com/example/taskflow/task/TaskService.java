@@ -5,6 +5,8 @@ import com.example.taskflow.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +28,32 @@ public class TaskService {
 
         Task savedTask = taskRepository.save(task);
 
+        return mapToResponse(savedTask);
+    }
+
+    public Page<TaskResponse> getTasks(String username, TaskStatus status, Pageable pageable) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Page<Task> tasks;
+        if (status != null) {
+            tasks = taskRepository.findAllByUserAndStatus(user, status, pageable);
+        } else {
+            tasks = taskRepository.findAllByUser(user, pageable);
+        }
+
+        return tasks.map(this::mapToResponse);
+    }
+
+
+    private TaskResponse mapToResponse(Task task) {
         return TaskResponse.builder()
-                .id(savedTask.getId())
-                .title(savedTask.getTitle())
-                .description(savedTask.getDescription())
-                .dueDate(savedTask.getDueDate())
-                .priority(savedTask.getPriority())
-                .status(savedTask.getStatus())
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .dueDate(task.getDueDate())
+                .priority(task.getPriority())
+                .status(task.getStatus())
                 .build();
     }
 }
