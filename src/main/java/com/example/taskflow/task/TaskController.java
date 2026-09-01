@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -21,5 +23,15 @@ public class TaskController {
     ) {
         TaskResponse response = taskService.createTask(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TaskResponse>> getTasks(
+            @RequestParam(required = false) TaskStatus status,
+            Pageable pageable,
+            Authentication authentication
+    ) {
+        Page<TaskResponse> responses = taskService.getTasks(authentication.getName(), status, pageable);
+        return ResponseEntity.ok(responses);
     }
 }
